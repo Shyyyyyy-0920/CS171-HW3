@@ -151,6 +151,7 @@ void BVHTree<_>::build() {
 template <typename _>
 typename BVHTree<_>::IndexType BVHTree<_>::build(
     int depth, const IndexType &span_left, const IndexType &span_right) {
+  // 区间实际上是[span_left,span_right)
   if (span_left >= span_right) return INVALID_INDEX;
 
   // early calculate bound
@@ -168,10 +169,8 @@ typename BVHTree<_>::IndexType BVHTree<_>::build(
   // @see span_left: The left index of the current span
   // @see span_right: The right index of the current span
   //
-  /* if ( */ UNIMPLEMENTED; /* ) */
-  {
+  if (span_right - span_left == 1 || depth >= CUTOFF_DEPTH) {
     // create leaf node
-    const auto &node = nodes[span_left];
     InternalNode result(span_left, span_right);
     result.is_leaf = true;
     result.aabb    = prebuilt_aabb;
@@ -205,9 +204,11 @@ use_median_heuristic:
     // [span_left, split) are less than those in [split, span_right)
     //
     // You may find `std::nth_element` useful here.
-
-    UNIMPLEMENTED;
-
+    auto whichSmaller=[dim](const NodeType&a,const NodeType&b){return a.getAABB().getCenter()[dim]<b.getAABB().getCenter()[dim];};
+    auto first=nodes.begin()+span_left;
+    auto middle=nodes.begin()+split;
+    auto last=nodes.begin()+span_right;
+    std::nth_element(first,middle,last,whichSmaller);
     // clang-format on
   } else if (hprofile == EHeuristicProfile::ESurfaceAreaHeuristic) {
 use_surface_area_heuristic:
