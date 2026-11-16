@@ -129,7 +129,8 @@ Vec3f IntersectionTestIntegrator::Li(
       // @see SurfaceInteraction::spawnRay
       //
       // You should update ray = ... with the spawned ray
-      UNIMPLEMENTED;
+      auto new_rgb = interaction.bsdf->sample(interaction, sampler, nullptr);
+      ray          = interaction.spawnRay(interaction.wi);
       continue;
     }
 

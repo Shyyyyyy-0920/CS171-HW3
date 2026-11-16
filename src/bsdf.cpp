@@ -110,7 +110,8 @@ Vec3f PerfectRefraction::sample(
   // Whether the ray is entering the medium
   bool entering = cos_theta_i > 0;
   // Corrected eta by direction
-  Float eta_corrected = entering ? eta : 1.0F / eta;
+  Float eta_corrected = entering ? 1.0F / eta : eta;
+  auto n_corrected    = entering ? normal : -normal;
 
   // TODO(HW3): implement the refraction logic here.
   //
@@ -128,8 +129,13 @@ Vec3f PerfectRefraction::sample(
   // You may find the following functions useful:
   // @see Refract for refraction calculation.
   // @see Reflect for reflection calculation.
-
-  UNIMPLEMENTED;
+  Vec3f wt(0.0);
+  auto flag = Refract(interaction.wo, n_corrected, eta_corrected,
+      wt);  // 这个函数内部已经进行了全反射的判断
+  if (!flag) {
+    wt = Reflect(interaction.wo, normal);
+  }
+  interaction.wi = wt;
 
   // Set the pdf and return value, we dont need to understand the value now
   if (pdf != nullptr) *pdf = 1.0F;
