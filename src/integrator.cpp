@@ -81,13 +81,13 @@ void IntersectionTestIntegrator::render(ref<Camera> camera, ref<Scene> scene) {
 
         // After you assign pixel_sample and ray, you can uncomment the
         // following lines to accumulate the radiance to the film.
-        //
-        //
-        // Accumulate radiance
-        // assert(pixel_sample.x >= dx && pixel_sample.x <= dx + 1);
-        // assert(pixel_sample.y >= dy && pixel_sample.y <= dy + 1);
-        // const Vec3f &L = Li(scene, ray, sampler);
-        // camera->getFilm()->commitSample(pixel_sample, L);
+        auto pixel_sample = sampler.getPixelSample();
+        auto ray =
+            camera->generateDifferentialRay(pixel_sample.x, pixel_sample.y);
+        assert(pixel_sample.x >= dx && pixel_sample.x <= dx + 1);
+        assert(pixel_sample.y >= dy && pixel_sample.y <= dy + 1);
+        const Vec3f &L = Li(scene, ray, sampler);
+        camera->getFilm()->commitSample(pixel_sample, L);
       }
     }
   }
@@ -173,8 +173,10 @@ Vec3f IntersectionTestIntegrator::directLighting(
   //
   //    You can use iteraction.p to get the intersection position.
   //
-  UNIMPLEMENTED;
-
+  test_ray.setTimeMax(dist_to_light);
+  if (scene->intersect(test_ray, interaction)) {
+    return Vec3f{0.0f, 0.0f, 0.0f};
+  }
   // Not occluded, compute the contribution using perfect diffuse diffuse model
   // Perform a quick and dirty check to determine whether the BSDF is ideal
   // diffuse by RTTI
@@ -192,10 +194,11 @@ Vec3f IntersectionTestIntegrator::directLighting(
     // The angle between light direction and surface normal
     Float cos_theta =
         std::max(Dot(light_dir, interaction.normal), 0.0f);  // one-sided
+    interaction.wi = light_dir;
+    auto material  = bsdf->evaluate(interaction);
 
     // You should assign the value to color
-    // color = ...
-    UNIMPLEMENTED;
+    color = cos_theta * material * point_light_flux;
   }
 
   return color;
