@@ -116,8 +116,12 @@ Vec3f IntersectionTestIntegrator::Li(
 
     // Set the outgoing direction
     interaction.wo = -ray.direction;
-
+    // 用于判断有没有命中物体否则就显示环境图
     if (!intersected) {
+      if (scene->hasInfiniteLight()) {
+        auto env_light = scene->getInfiniteLight();
+        return env_light->Le(interaction, interaction.wo);
+      }
       break;
     }
     // 判断相机看到灯板后返回灯板自身的光
@@ -180,14 +184,21 @@ Vec3f IntersectionTestIntegrator::directLighting(
       color += contribute;
     }
   }
-  // 下面是面光源的循环
+  // 下面是面光源的循环，注意区分面光源和环境光，因为这两者都会添加到scene
+  // light列表里
   for (const auto &light : scene->getLights()) {
+    // 先判断是不是环境光
+    // 首先light.get()是从当前的ref<light>中取到Light*指针
+    // dynamic_cast<const AreaLight
+    // *>是检查该指针实际指向的对象是否为AreaLight,也就是面光源
+    // 如果是的话，会得到非空指针，如果不是会得到nullptr，这时再特判
+    if (!dynamic_cast<const AreaLight *>(light.get())) {
+      continue;
+    }
     auto light_interaction = light->sample(interaction, sampler);
     auto shadow_ray        = interaction.spawnRayTo(light_interaction.p);
     auto is_blocked        = scene->isBlocked(shadow_ray);
-    if (is_blocked) {
-      continue;
-    }
+    if (is_blocked) continue;
     auto r            = Norm(light_interaction.p - interaction.p);
     Float cos_theta_p = std::max(0.0f, Dot(interaction.normal, interaction.wi));
     Float cos_theta_q =
@@ -198,6 +209,19 @@ Vec3f IntersectionTestIntegrator::directLighting(
     auto L = light->Le(light_interaction, light_interaction.wo);
     color += (L * brdf * cos_theta_p * cos_theta_q) /
              (r * r * light_interaction.pdf);
+  }
+  if (scene->hasInfiniteLight()) {
+    auto env_light       = scene->getInfiniteLight();
+    auto env_interaction = env_light->sample(interaction, sampler);
+    auto env_ray         = interaction.spawnRay(interaction.wi);
+    if (!scene->isBlocked(env_ray)) {
+      auto env_L         = env_light->Le(env_interaction, env_interaction.wo);
+      auto env_bsdf      = interaction.bsdf->evaluate(interaction);
+      auto env_n         = interaction.normal;
+      auto env_cos_theta = std::max(0.0f, Dot(env_n, interaction.wi));
+      auto env_color = (env_L * env_bsdf * env_cos_theta) / env_interaction.pdf;
+      color += env_color;
+    }
   }
   return color;
 }

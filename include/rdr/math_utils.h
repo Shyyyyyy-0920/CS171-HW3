@@ -39,6 +39,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <random>
 
 #include "rdr/canary.h"
@@ -357,7 +358,12 @@ RDR_FORCEINLINE Vec3f CosineSampleHemisphere(const Vec2f &u) {
 
 RDR_FORCEINLINE Vec3f UniformSampleSphere(const Vec2f &u) {
   // This is left as the next assignment
-  UNIMPLEMENTED;
+  // 由于我打算复用已有的infiniteAreaLight的sample函数
+  // 这个函数用到了UniformSampleSphere，因此要补充完整
+  auto z   = 2 * u.x - 1;
+  auto phi = 2 * PI * u.y;
+  auto r   = std::sqrt(1 - z * z);
+  return Vec3f(r * std::cos(phi), r * std::sin(phi), z);
 }
 
 RDR_FORCEINLINE Vec3f UniformSampleTriangle(const Vec2f &u) {
@@ -530,7 +536,7 @@ struct BeckmannDistribution {
       Float m_alpha_x2 = alpha_x * alpha_x;
       Float m_alpha_y2 = alpha_y * alpha_y;
       tan2_theta       = -log_sample / (cos_phi * cos_phi / m_alpha_x2 +
-                                     sin_phi * sin_phi / m_alpha_y2);
+                                           sin_phi * sin_phi / m_alpha_y2);
     }
 
     Float cos_theta = 1 / std::sqrt(1 + tan2_theta);
