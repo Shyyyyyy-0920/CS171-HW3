@@ -61,6 +61,8 @@ void IntersectionTestIntegrator::render(ref<Camera> camera, ref<Scene> scene) {
     if (cnt % (resolution.x / 10) == 0)
       Info_("Rendering: {:.02f}%", cnt * 100.0 / resolution.x);
     Sampler sampler;
+    // 这里一定要初始化种子，否则图形会出现横纹
+    sampler.setSeed(dx);
     for (int dy = 0; dy < resolution.y; dy++) {
       sampler.setPixelIndex2D(Vec2i(dx, dy));
       for (int sample = 0; sample < spp; sample++) {
@@ -118,17 +120,13 @@ Vec3f IntersectionTestIntegrator::Li(
     if (!intersected) {
       break;
     }
-
+    // 判断相机看到灯板后返回灯板自身的光
+    if (interaction.isLight()) {
+      return interaction.light->Le(interaction, interaction.wo);
+    }
     if (is_perfect_refraction) {
-      // We should follow the specular direction
-      // TODO(HW3): call the interaction.bsdf->sample to get the new direction
-      // and update the ray accordingly.
-      //
-      // Useful Functions:
-      // @see BSDF::sample
-      // @see SurfaceInteraction::spawnRay
-      //
-      // You should update ray = ... with the spawned ray
+      // 这个函数实际上做了两件事，第一件事调用sample，把折射/全反射后的方向写入interaction.wi
+      // 第二件事是讲函数返回的RGB保存到newrgb
       auto new_rgb = interaction.bsdf->sample(interaction, sampler, nullptr);
       ray          = interaction.spawnRay(interaction.wi);
       continue;
@@ -139,7 +137,6 @@ Vec3f IntersectionTestIntegrator::Li(
       diffuse_found = true;
       break;
     }
-
     // We simply omit any other types of surfaces
     break;
   }
@@ -148,12 +145,12 @@ Vec3f IntersectionTestIntegrator::Li(
     return color;
   }
 
-  color = directLighting(scene, interaction);
+  color = directLighting(scene, interaction, sampler);
   return color;
 }
 
 Vec3f IntersectionTestIntegrator::directLighting(
-    ref<Scene> scene, SurfaceInteraction &interaction) const {
+    ref<Scene> scene, SurfaceInteraction &interaction, Sampler &sampler) const {
   Float dist_to_light = 0.0;
   Vec3f light_dir(0.0);
   Vec3f color(0, 0, 0);
@@ -182,6 +179,25 @@ Vec3f IntersectionTestIntegrator::directLighting(
                         (dist_to_light * dist_to_light);
       color += contribute;
     }
+  }
+  // 下面是面光源的循环
+  for (const auto &light : scene->getLights()) {
+    auto light_interaction = light->sample(interaction, sampler);
+    auto shadow_ray        = interaction.spawnRayTo(light_interaction.p);
+    auto is_blocked        = scene->isBlocked(shadow_ray);
+    if (is_blocked) {
+      continue;
+    }
+    auto r            = Norm(light_interaction.p - interaction.p);
+    Float cos_theta_p = std::max(0.0f, Dot(interaction.normal, interaction.wi));
+    Float cos_theta_q =
+        std::max(0.0f, Dot(light_interaction.normal, light_interaction.wo));
+    // 已包含漫反射的1/pi
+    auto brdf = interaction.bsdf->evaluate(interaction);
+    // 返回的是该interation沿着wo方向发出的rgb辐亮度
+    auto L = light->Le(light_interaction, light_interaction.wo);
+    color += (L * brdf * cos_theta_p * cos_theta_q) /
+             (r * r * light_interaction.pdf);
   }
   return color;
 }
