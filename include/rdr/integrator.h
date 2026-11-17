@@ -58,11 +58,19 @@ public:
 class IntersectionTestIntegrator : public Integrator {
 public:
   IntersectionTestIntegrator(const Properties &props) : Integrator(props) {
-    point_light_position = props.getProperty<Vec3f>(
+    // 这里之所以在getProperty后面加一个值，是为了在hasProperty是false的情况下依旧可以在缺失时使用最后的默认值
+    auto point_light1_position = props.getProperty<Vec3f>(
         "point_light_position", Vec3f(0.0F, 5.0F, 0.0F));
-    point_light_flux =
+    auto point_light1_flux =
         props.getProperty<Vec3f>("point_light_flux", Vec3f(1.0F, 1.0F, 1.0F));
-
+    PointLightData light1{point_light1_position, point_light1_flux};
+    auto point_light2_position = props.getProperty<Vec3f>(
+        "point_light2_position", Vec3f(-0.5, 5.0, 0.0));
+    auto point_light2_flux =
+        props.getProperty<Vec3f>("point_light2_flux", Vec3f(1.0, 1.0, 1.0));
+    PointLightData light2{point_light2_position, point_light2_flux};
+    point_lights.push_back(light1);
+    point_lights.push_back(light2);
     max_depth = props.getProperty<int>("max_depth", 16);
     spp       = props.getProperty<int>("spp", 8);
   }
@@ -76,8 +84,6 @@ public:
   std::string toString() const override {
     std::ostringstream ss;
     ss << "IntersectionTestIntegrator[\n"
-       << format("  point_light_position = {}\n", point_light_position)
-       << format("  point_light_flux     = {}\n", point_light_flux)
        << format("  max_depth           = {}\n", max_depth)
        << format("  spp                 = {}\n", spp) << "]";
     return ss.str();
@@ -87,13 +93,13 @@ public:
   Vec3f directLighting(ref<Scene> scene, SurfaceInteraction &interaction) const;
 
 protected:
-  /// The position of the point light
-  Vec3f point_light_position;
-
-  /// The radiance of the point light
-  Vec3f point_light_flux;
-
   int max_depth, spp;
+  // 新添加的结构体
+  struct PointLightData {
+    Vec3f position{0.0};
+    Vec3f flux{0.0};  // 同一盏灯的rgb强度
+  };
+  std::vector<PointLightData> point_lights;
 };
 
 /// Retained for debugging

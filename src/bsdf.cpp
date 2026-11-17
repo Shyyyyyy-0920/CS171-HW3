@@ -110,7 +110,7 @@ Vec3f PerfectRefraction::sample(
   // Whether the ray is entering the medium
   bool entering = cos_theta_i > 0;
   // Corrected eta by direction
-  Float eta_corrected = entering ? 1.0F / eta : eta;
+  Float eta_corrected = entering ? eta : 1.0F / eta;
   auto n_corrected    = entering ? normal : -normal;
 
   // TODO(HW3): implement the refraction logic here.
