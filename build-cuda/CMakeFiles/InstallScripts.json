@@ -1,0 +1,17 @@
+{
+	"InstallScripts" : 
+	[
+		"E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/cmake_install.cmake",
+		"E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/fmt-build/cmake_install.cmake",
+		"E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/json-build/cmake_install.cmake",
+		"E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/tinyobjloader-build/cmake_install.cmake",
+		"E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/miniz-build/cmake_install.cmake",
+		"E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/spdlog-build/cmake_install.cmake",
+		"E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/googletest-build/cmake_install.cmake",
+		"E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/googletest-build/googlemock/cmake_install.cmake",
+		"E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/googletest-build/googletest/cmake_install.cmake",
+		"E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/src/cmake_install.cmake",
+		"E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/tests/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

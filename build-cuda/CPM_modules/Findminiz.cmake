@@ -1,0 +1,3 @@
+include("E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/data/CPM.cmake")
+CPMAddPackage("GITHUB_REPOSITORY;richgel999/miniz;GIT_TAG;3.0.2;EXCLUDE_FROM_ALL;YES;SYSTEM;YES;")
+set(miniz_FOUND TRUE)

@@ -1,0 +1,3 @@
+include("E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/data/CPM.cmake")
+CPMAddPackage("GITHUB_REPOSITORY;nlohmann/json;VERSION;3.11.2;EXCLUDE_FROM_ALL;YES;SYSTEM;YES;")
+set(json_FOUND TRUE)

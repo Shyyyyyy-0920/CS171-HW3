@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/miniz-subbuild/CMakeFiles/miniz-populate"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/miniz-subbuild/CMakeFiles/miniz-populate.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/miniz-subbuild/CMakeFiles/miniz-populate-complete.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/miniz-subbuild/miniz-populate-prefix/src/miniz-populate-stamp/miniz-populate-build.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/miniz-subbuild/miniz-populate-prefix/src/miniz-populate-stamp/miniz-populate-configure.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/miniz-subbuild/miniz-populate-prefix/src/miniz-populate-stamp/miniz-populate-download.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/miniz-subbuild/miniz-populate-prefix/src/miniz-populate-stamp/miniz-populate-install.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/miniz-subbuild/miniz-populate-prefix/src/miniz-populate-stamp/miniz-populate-mkdir.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/miniz-subbuild/miniz-populate-prefix/src/miniz-populate-stamp/miniz-populate-patch.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/miniz-subbuild/miniz-populate-prefix/src/miniz-populate-stamp/miniz-populate-test.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/miniz-subbuild/miniz-populate-prefix/src/miniz-populate-stamp/miniz-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"miniz-populate"
+		],
+		"name" : "miniz-populate"
+	}
+}

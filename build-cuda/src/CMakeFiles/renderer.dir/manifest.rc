@@ -1,0 +1,2 @@
+#pragma code_page(65001)
+1 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/src/CMakeFiles/renderer.dir/embed.manifest"

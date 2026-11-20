@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/tinyobjloader-subbuild/CMakeFiles/tinyobjloader-populate"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/tinyobjloader-subbuild/CMakeFiles/tinyobjloader-populate.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/tinyobjloader-subbuild/CMakeFiles/tinyobjloader-populate-complete.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/tinyobjloader-subbuild/tinyobjloader-populate-prefix/src/tinyobjloader-populate-stamp/tinyobjloader-populate-build.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/tinyobjloader-subbuild/tinyobjloader-populate-prefix/src/tinyobjloader-populate-stamp/tinyobjloader-populate-configure.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/tinyobjloader-subbuild/tinyobjloader-populate-prefix/src/tinyobjloader-populate-stamp/tinyobjloader-populate-download.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/tinyobjloader-subbuild/tinyobjloader-populate-prefix/src/tinyobjloader-populate-stamp/tinyobjloader-populate-install.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/tinyobjloader-subbuild/tinyobjloader-populate-prefix/src/tinyobjloader-populate-stamp/tinyobjloader-populate-mkdir.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/tinyobjloader-subbuild/tinyobjloader-populate-prefix/src/tinyobjloader-populate-stamp/tinyobjloader-populate-patch.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/tinyobjloader-subbuild/tinyobjloader-populate-prefix/src/tinyobjloader-populate-stamp/tinyobjloader-populate-test.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/tinyobjloader-subbuild/tinyobjloader-populate-prefix/src/tinyobjloader-populate-stamp/tinyobjloader-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"tinyobjloader-populate"
+		],
+		"name" : "tinyobjloader-populate"
+	}
+}

@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/fmt-subbuild/CMakeFiles/fmt-populate"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/fmt-subbuild/CMakeFiles/fmt-populate.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/fmt-subbuild/CMakeFiles/fmt-populate-complete.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/fmt-subbuild/fmt-populate-prefix/src/fmt-populate-stamp/fmt-populate-build.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/fmt-subbuild/fmt-populate-prefix/src/fmt-populate-stamp/fmt-populate-configure.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/fmt-subbuild/fmt-populate-prefix/src/fmt-populate-stamp/fmt-populate-download.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/fmt-subbuild/fmt-populate-prefix/src/fmt-populate-stamp/fmt-populate-install.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/fmt-subbuild/fmt-populate-prefix/src/fmt-populate-stamp/fmt-populate-mkdir.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/fmt-subbuild/fmt-populate-prefix/src/fmt-populate-stamp/fmt-populate-patch.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/fmt-subbuild/fmt-populate-prefix/src/fmt-populate-stamp/fmt-populate-test.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/fmt-subbuild/fmt-populate-prefix/src/fmt-populate-stamp/fmt-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"fmt-populate"
+		],
+		"name" : "fmt-populate"
+	}
+}

@@ -1,0 +1,14 @@
+# Target labels
+ stb-populate
+# Source files and their labels
+E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/stb-subbuild/CMakeFiles/stb-populate
+E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/stb-subbuild/CMakeFiles/stb-populate.rule
+E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/stb-subbuild/CMakeFiles/stb-populate-complete.rule
+E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-build.rule
+E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-configure.rule
+E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-download.rule
+E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-install.rule
+E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-mkdir.rule
+E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-patch.rule
+E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-test.rule
+E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/stb-subbuild/stb-populate-prefix/src/stb-populate-stamp/stb-populate-update.rule

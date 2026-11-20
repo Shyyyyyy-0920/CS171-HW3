@@ -8,20 +8,34 @@ list(REMOVE_ITEM source "${PROJECT_SOURCE_DIR}/src/conventions.cpp")
 
 # # Add library
 add_library(renderer_lib STATIC "${source}")
+
+if(USE_CUDA_BVH)
+  target_sources(renderer_lib PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/gpu/gpu_bvh.cu")
+  target_compile_definitions(renderer_lib PUBLIC USE_CUDA_BVH)
+endif()
+
+if(MSVC)
+  target_compile_options(renderer_lib PRIVATE
+    "$<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=/Zc:preprocessor>"
+  )
+endif()
+
 add_library(renderer::lib ALIAS renderer_lib)
 set_property(TARGET renderer_lib PROPERTY CXX_STANDARD 17)
 
 # Include libraries
-target_link_libraries(renderer_lib PUBLIC 
-  stb OpenMP::OpenMP_CXX fmt nlohmann_json tinyobjloader 
+target_link_libraries(renderer_lib PUBLIC
+  stb OpenMP::OpenMP_CXX fmt nlohmann_json tinyobjloader
   linalg fmt spdlog tinyexr)
-if (USE_EMBREE)
+
+if(USE_EMBREE)
   target_link_libraries(renderer_lib PUBLIC embree)
   target_compile_definitions(renderer_lib PUBLIC USE_EMBREE)
   message(STATUS "Embree is enabled")
 else()
   message(STATUS "Embree is disabled")
 endif()
+
 target_include_directories(renderer_lib PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
 add_executable(renderer "${PROJECT_SOURCE_DIR}/src/main.cpp")

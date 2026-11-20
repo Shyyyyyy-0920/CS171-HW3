@@ -1,4 +1,4 @@
-// === ------------------------------------------------------------------------
+﻿// === ------------------------------------------------------------------------
 //
 // This file is part of ShanghaiTech CS171 Homework. It is NOT an open source
 // project, so students are strongly prohibited from redistributing it, i.e.,
@@ -29,8 +29,10 @@
 // TriangleMesh thus cannot be used with bvhtree.
 #ifndef __BVH_TREE_H__
 #define __BVH_TREE_H__
+#include <vector>
 
 #include "rdr/accel.h"
+#include "rdr/gpu_bvh.h"
 #include "rdr/platform.h"
 #include "rdr/primitive.h"
 #include "rdr/ray.h"
@@ -124,6 +126,7 @@ private:
   template <typename Callback>
   bool intersect(
       Ray &ray, const IndexType &node_index, Callback callback) const;
+  std::vector<GpuBvhPrimitive> makeGpuInput() const;
 };
 
 /* ===================================================================== *
@@ -142,6 +145,37 @@ void BVHTree<_>::clear() {
 template <typename _>
 void BVHTree<_>::build() {
   if (is_built) return;
+#ifdef USE_CUDA_BVH
+  if (!nodes.empty()) {
+    const auto host_primitives = makeGpuInput();
+    const auto count = static_cast<std::uint32_t>(host_primitives.size());
+    std::vector<GpuBvhNode> host_nodes(2 * host_primitives.size() - 1);
+    std::vector<std::uint32_t> host_primitive_indices(count);
+    const bool gpu_ok = buildGpuBvh(host_primitives.data(), count,
+        host_nodes.data(), host_primitive_indices.data());
+    if (gpu_ok) {
+      internal_nodes.resize(host_nodes.size());
+      auto leaf_base = count - 1;
+      for (std::size_t i = 0; i < host_nodes.size(); ++i) {
+        internal_nodes[i].left_index  = host_nodes[i].left_index;
+        internal_nodes[i].right_index = host_nodes[i].right_index;
+        for (int dim = 0; dim < 3; ++dim) {
+          internal_nodes[i].aabb.low_bnd[dim]   = host_nodes[i].lower[dim];
+          internal_nodes[i].aabb.upper_bnd[dim] = host_nodes[i].upper[dim];
+        }
+        internal_nodes[i].is_leaf = i >= leaf_base ? true : false;
+        if (internal_nodes[i].is_leaf) {
+          auto leaf_index              = i - leaf_base;
+          internal_nodes[i].span_left  = host_primitive_indices[leaf_index];
+          internal_nodes[i].span_right = internal_nodes[i].span_left + 1;
+        }
+      }
+      root_index = 0;
+      is_built   = true;
+      return;
+    }
+  }
+#endif
   // pre-allocate memory
   internal_nodes.reserve(2 * nodes.size());
   root_index = build(0, 0, nodes.size());
@@ -158,17 +192,6 @@ typename BVHTree<_>::IndexType BVHTree<_>::build(
   AABB prebuilt_aabb;
   for (IndexType span_index = span_left; span_index < span_right; ++span_index)
     prebuilt_aabb.unionWith(nodes[span_index].getAABB());
-
-  // TODO(HW3): setup the stop criteria
-  //
-  // You should fill in the stop criteria here.
-  //
-  // You may find the following variables useful:
-  //
-  // @see CUTOFF_DEPTH: The maximum depth you would like to build
-  // @see span_left: The left index of the current span
-  // @see span_right: The right index of the current span
-  //
   if (span_right - span_left == 1 || depth >= CUTOFF_DEPTH) {
     // create leaf node
     InternalNode result(span_left, span_right);
@@ -264,7 +287,21 @@ bool BVHTree<_>::intersect(
     return result;
   }
 }
-
+// 注意BVHTree是类模板，因此在定义开头要跟build的写法保持一致就行
+template <typename _>
+std::vector<GpuBvhPrimitive> BVHTree<_>::makeGpuInput() const {
+  auto nodes_num = nodes.size();
+  std::vector<GpuBvhPrimitive> input(nodes_num);
+  for (int i = 0; i < nodes_num; ++i) {
+    AABB box = nodes[i].getAABB();
+    for (int dim = 0; dim < 3; ++dim) {
+      input[i].lower[dim] = box.low_bnd[dim];
+      input[i].upper[dim] = box.upper_bnd[dim];
+    }
+    input[i].original_index = i;
+  }
+  return input;
+}
 RDR_NAMESPACE_END
 
 #endif

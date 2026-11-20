@@ -1,0 +1,523 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						9,
+						10
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						21
+					]
+				},
+				{
+					"build" : "_deps/fmt-build",
+					"jsonFile" : "directory-_deps.fmt-build-Debug-0e0db3b75ba10361fa05.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "build-cuda/_deps/fmt-src",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "_deps/json-build",
+					"jsonFile" : "directory-_deps.json-build-Debug-906ca8e290c3f8ca28e8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "build-cuda/_deps/json-src"
+				},
+				{
+					"build" : "_deps/tinyobjloader-build",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-_deps.tinyobjloader-build-Debug-6075dde09d54ae3055b8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 3,
+					"source" : "build-cuda/_deps/tinyobjloader-src",
+					"targetIndexes" : 
+					[
+						22,
+						23
+					]
+				},
+				{
+					"build" : "_deps/miniz-build",
+					"jsonFile" : "directory-_deps.miniz-build-Debug-37d918f744d2fce7ec12.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 4,
+					"source" : "build-cuda/_deps/miniz-src",
+					"targetIndexes" : 
+					[
+						14
+					]
+				},
+				{
+					"build" : "_deps/spdlog-build",
+					"jsonFile" : "directory-_deps.spdlog-build-Debug-aca2cc3458507d8cdb30.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 5,
+					"source" : "build-cuda/_deps/spdlog-src",
+					"targetIndexes" : 
+					[
+						19
+					]
+				},
+				{
+					"build" : "_deps/googletest-build",
+					"childIndexes" : 
+					[
+						7
+					],
+					"jsonFile" : "directory-_deps.googletest-build-Debug-c7b527c0529552d1d2a6.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 6,
+					"source" : "build-cuda/_deps/googletest-src"
+				},
+				{
+					"build" : "_deps/googletest-build/googlemock",
+					"childIndexes" : 
+					[
+						8
+					],
+					"jsonFile" : "directory-_deps.googletest-build.googlemock-Debug-57ad4b2d36a61df8e7ee.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 6,
+					"projectIndex" : 7,
+					"source" : "build-cuda/_deps/googletest-src/googlemock",
+					"targetIndexes" : 
+					[
+						6,
+						7
+					]
+				},
+				{
+					"build" : "_deps/googletest-build/googletest",
+					"jsonFile" : "directory-_deps.googletest-build.googletest-Debug-e00124cd1711e56cd4d6.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 7,
+					"projectIndex" : 8,
+					"source" : "build-cuda/_deps/googletest-src/googletest",
+					"targetIndexes" : 
+					[
+						8,
+						9
+					]
+				},
+				{
+					"build" : "src",
+					"jsonFile" : "directory-src-Debug-c94b7c2814d5a21df52c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "src",
+					"targetIndexes" : 
+					[
+						1,
+						3,
+						16,
+						17
+					]
+				},
+				{
+					"build" : "tests",
+					"jsonFile" : "directory-tests-Debug-70e4927a02b591d5c1f8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "tests",
+					"targetIndexes" : 
+					[
+						0,
+						2,
+						4,
+						10,
+						11,
+						12,
+						13,
+						15,
+						18,
+						20
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						9,
+						10
+					],
+					"name" : "CS171-assignment4",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						10,
+						11,
+						12,
+						13,
+						15,
+						16,
+						17,
+						18,
+						20,
+						21
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "FMT",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "nlohmann_json",
+					"parentIndex" : 0
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "tinyobjloader",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						22,
+						23
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4
+					],
+					"name" : "miniz",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						14
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						5
+					],
+					"name" : "spdlog",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						19
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						7
+					],
+					"directoryIndexes" : 
+					[
+						6
+					],
+					"name" : "googletest-distribution",
+					"parentIndex" : 0
+				},
+				{
+					"childIndexes" : 
+					[
+						8
+					],
+					"directoryIndexes" : 
+					[
+						7
+					],
+					"name" : "gmock",
+					"parentIndex" : 6,
+					"targetIndexes" : 
+					[
+						6,
+						7
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						8
+					],
+					"name" : "gtest",
+					"parentIndex" : 7,
+					"targetIndexes" : 
+					[
+						8,
+						9
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 10,
+					"id" : "bvh_tests_exe::@a44f0ac069e85531cdee",
+					"jsonFile" : "target-bvh_tests_exe-Debug-9b27d4f62d37314d2559.json",
+					"name" : "bvh_tests_exe",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "conventions::@145eef247bfb46b6828c",
+					"jsonFile" : "target-conventions-Debug-a76605a82ebcf10a6246.json",
+					"name" : "conventions",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "distribution_tests_exe::@a44f0ac069e85531cdee",
+					"jsonFile" : "target-distribution_tests_exe-Debug-b11807bf5b3cefbf1986.json",
+					"name" : "distribution_tests_exe",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "exrtools::@145eef247bfb46b6828c",
+					"jsonFile" : "target-exrtools-Debug-ab2d4d5dfbbfd53b7c17.json",
+					"name" : "exrtools",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "factory_tests_exe::@a44f0ac069e85531cdee",
+					"jsonFile" : "target-factory_tests_exe-Debug-ee97f0d5b3024a4d9b82.json",
+					"name" : "factory_tests_exe",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "fmt::@976f4f0bee90b99ecdb6",
+					"jsonFile" : "target-fmt-Debug-b4cf68ffe4b1e12a40af.json",
+					"name" : "fmt",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "gmock::@0f7bb11d64f3678238c7",
+					"jsonFile" : "target-gmock-Debug-28691780f1b384ee251e.json",
+					"name" : "gmock",
+					"projectIndex" : 7
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "gmock_main::@0f7bb11d64f3678238c7",
+					"jsonFile" : "target-gmock_main-Debug-3cb6678c794d2480f745.json",
+					"name" : "gmock_main",
+					"projectIndex" : 7
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "gtest::@1ea2dfc0605fe3ab2a3f",
+					"jsonFile" : "target-gtest-Debug-7c00c84fa32fff7ca252.json",
+					"name" : "gtest",
+					"projectIndex" : 8
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "gtest_main::@1ea2dfc0605fe3ab2a3f",
+					"jsonFile" : "target-gtest_main-Debug-5c77e380f0a4355ac448.json",
+					"name" : "gtest_main",
+					"projectIndex" : 8
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "integration_tests_exe::@a44f0ac069e85531cdee",
+					"jsonFile" : "target-integration_tests_exe-Debug-611fe98db2a31a93203a.json",
+					"name" : "integration_tests_exe",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "intersection_tests_exe::@a44f0ac069e85531cdee",
+					"jsonFile" : "target-intersection_tests_exe-Debug-d211dcb345d9f729f46d.json",
+					"name" : "intersection_tests_exe",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "kdtree_tests_exe::@a44f0ac069e85531cdee",
+					"jsonFile" : "target-kdtree_tests_exe-Debug-7cf2dbc9f1b4c4d76520.json",
+					"name" : "kdtree_tests_exe",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "math_tests_exe::@a44f0ac069e85531cdee",
+					"jsonFile" : "target-math_tests_exe-Debug-c4aca89a1d2add328451.json",
+					"name" : "math_tests_exe",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "miniz::@fc7da8791af9df5756f3",
+					"jsonFile" : "target-miniz-Debug-8a88b52a24f0afbed582.json",
+					"name" : "miniz",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "properties_tests_exe::@a44f0ac069e85531cdee",
+					"jsonFile" : "target-properties_tests_exe-Debug-f1ac0cf62a6d284d8e23.json",
+					"name" : "properties_tests_exe",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "renderer::@145eef247bfb46b6828c",
+					"jsonFile" : "target-renderer-Debug-91b712bdeb5ea63b54e1.json",
+					"name" : "renderer",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "renderer_lib::@145eef247bfb46b6828c",
+					"jsonFile" : "target-renderer_lib-Debug-e82912ae3983e5cfec2f.json",
+					"name" : "renderer_lib",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "sdtree_tests_exe::@a44f0ac069e85531cdee",
+					"jsonFile" : "target-sdtree_tests_exe-Debug-a52307a9aed615b07371.json",
+					"name" : "sdtree_tests_exe",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "spdlog::@eb35cfce7893ccfeff1e",
+					"jsonFile" : "target-spdlog-Debug-ebde73d44b7d440e5963.json",
+					"name" : "spdlog",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "texture_tests_exe::@a44f0ac069e85531cdee",
+					"jsonFile" : "target-texture_tests_exe-Debug-945d2dc9e6bd6947e3b8.json",
+					"name" : "texture_tests_exe",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "tinyexr::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-tinyexr-Debug-207957aa226116c27a99.json",
+					"name" : "tinyexr",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "tinyobjloader::@504dab42fa214d3d2823",
+					"jsonFile" : "target-tinyobjloader-Debug-8e48f836e4f64ba6bf5f.json",
+					"name" : "tinyobjloader",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "uninstall::@504dab42fa214d3d2823",
+					"jsonFile" : "target-uninstall-Debug-d99af13ab25b71b13161.json",
+					"name" : "uninstall",
+					"projectIndex" : 3
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda",
+		"source" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 8
+	}
+}

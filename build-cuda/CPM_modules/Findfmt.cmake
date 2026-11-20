@@ -1,0 +1,3 @@
+include("E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/data/CPM.cmake")
+CPMAddPackage("GITHUB_REPOSITORY;fmtlib/fmt;GIT_TAG;9.1.0;EXCLUDE_FROM_ALL;YES;SYSTEM;YES;")
+set(fmt_FOUND TRUE)

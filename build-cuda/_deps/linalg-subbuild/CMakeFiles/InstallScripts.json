@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/linalg-subbuild/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

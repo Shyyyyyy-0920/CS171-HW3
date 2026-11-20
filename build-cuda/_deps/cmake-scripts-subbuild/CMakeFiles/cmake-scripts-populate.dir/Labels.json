@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/cmake-scripts-subbuild/CMakeFiles/cmake-scripts-populate"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/cmake-scripts-subbuild/CMakeFiles/cmake-scripts-populate.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/cmake-scripts-subbuild/CMakeFiles/cmake-scripts-populate-complete.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/cmake-scripts-subbuild/cmake-scripts-populate-prefix/src/cmake-scripts-populate-stamp/cmake-scripts-populate-build.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/cmake-scripts-subbuild/cmake-scripts-populate-prefix/src/cmake-scripts-populate-stamp/cmake-scripts-populate-configure.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/cmake-scripts-subbuild/cmake-scripts-populate-prefix/src/cmake-scripts-populate-stamp/cmake-scripts-populate-download.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/cmake-scripts-subbuild/cmake-scripts-populate-prefix/src/cmake-scripts-populate-stamp/cmake-scripts-populate-install.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/cmake-scripts-subbuild/cmake-scripts-populate-prefix/src/cmake-scripts-populate-stamp/cmake-scripts-populate-mkdir.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/cmake-scripts-subbuild/cmake-scripts-populate-prefix/src/cmake-scripts-populate-stamp/cmake-scripts-populate-patch.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/cmake-scripts-subbuild/cmake-scripts-populate-prefix/src/cmake-scripts-populate-stamp/cmake-scripts-populate-test.rule"
+		},
+		{
+			"file" : "E:/CS171/ShanghaiTech-CS171/HW/CS171-HW3/build-cuda/_deps/cmake-scripts-subbuild/cmake-scripts-populate-prefix/src/cmake-scripts-populate-stamp/cmake-scripts-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"cmake-scripts-populate"
+		],
+		"name" : "cmake-scripts-populate"
+	}
+}
