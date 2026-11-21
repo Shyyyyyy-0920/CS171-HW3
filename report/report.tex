@@ -1,4 +1,5 @@
 \documentclass[acmtog]{acmart}
+\settopmatter{printacmref=false}
 \usepackage{graphicx}
 \usepackage{subfigure}
 \usepackage{natbib}
@@ -25,18 +26,289 @@
 % Title portion
 \title{Assignment 3:\\ {Basic Ray Tracing}}
 
-\author{Name: \quad \\ student number:\
-\\email: \quad \texttt{}}
+\author{Name: \quad Shu Haoyu \\ Student number:\quad 2024533012\ 
+\\Email:\quad shuhy2024@shanghaitech.edu.cn \quad \texttt{}}
 
 % Document starts
+\renewcommand{\shortauthors}{Shu Haoyu}
+\renewcommand{\dbltopfraction}{0.88}
+\setcounter{dbltopnumber}{3}
+\setlength{\emergencystretch}{1.5em}
+
 \begin{document}
 \maketitle
 
 \vspace*{2 ex}
 
 \section{Introduction}
+This assignment implements a basic ray tracer for the Cornell box and other supplied scenes. The core tasks include ray--geometry intersections, BVH construction, direct lighting with shadow rays, sub-pixel sampling, and ideal refraction. The extensions add multiple point lights, a rectangular area light, environment lighting, and a CUDA implementation of BVH construction.
+
+I use the supplied camera, film, mesh loader, and scene and light interfaces. My main changes are the intersection routines, the median partition in the BVH, the sub-pixel and material branches of the integrator, the direct-light estimators, and the optional CUDA builder.
+
+I use VS Code with clangd and CMake's compilation database. The CUDA build uses MSVC x64 and Ninja. The CMake option \texttt{USE\_CUDA\_BVH} selects the GPU builder, and the ray traversal and shading run on the CPU.
+
 \section{Implementation Details}
+
+\subsection{Ray--triangle intersection}
+I implemented the missing intersection test in \texttt{TriangleIntersect} in \texttt{accel.cpp}. The function receives a ray, a triangle index, a mesh, and a \texttt{SurfaceInteraction} to fill on a hit. I use \texttt{triangle\_index} to read three entries of the mesh's index array, then use those entries to obtain $\mathbf v_0,\mathbf v_1,\mathbf v_2$. The framework assertions check that the indices are valid and the ray direction is normalized.
+
+\paragraph{Solving for distance and barycentric coordinates.}
+Write the ray origin and direction as $\mathbf o$ and $\mathbf d$. I form the triangle edges $\mathbf e_1=\mathbf v_1-\mathbf v_0$ and $\mathbf e_2=\mathbf v_2-\mathbf v_0$. The intersection has two representations:
+\begin{align}
+\mathbf p &= \mathbf o+t\mathbf d,\\
+\mathbf p &= \mathbf v_0+u\mathbf e_1+v\mathbf e_2 .
+\end{align}
+Moving $t\mathbf d$ to the other side gives the system used in the code:
+\begin{equation}
+\underbrace{\begin{bmatrix}
+-\mathbf d & \mathbf e_1 & \mathbf e_2
+\end{bmatrix}}_{\mathbf M}
+\begin{bmatrix}t\\u\\v\end{bmatrix}
+=\mathbf o-\mathbf v_0 .
+\end{equation}
+The first column is negative because $\mathbf d$ came from the ray side of the equation. I form the system in double precision. If \texttt{determinant(M)} is zero, I return \texttt{false}. Otherwise, \texttt{Mul(Inverse(M), vo)} returns $(t,u,v)$ in that order, with \texttt{vo} storing $\mathbf o-\mathbf v_0$.
+
+I accept a solution when $u\geq0$, $v\geq0$, $u+v\leq1$, and $t_{\min}\leq t\leq t_{\max}$. For example, for the unit right triangle in the $xy$ plane and a ray from $(0.25,0.25,2)$ straight down the $z$ axis, the solution is $t=2$ and $u=v=0.25$. The weights sent to the supplied \texttt{CalculateTriangleDifferentials} are $(1-u-v,u,v)=(0.5,0.25,0.25)$. On a hit, I set \texttt{ray.t\_max} to $t$ so that subsequent triangle tests consider hits at or before this distance.
+
+\subsection{Ray--AABB intersection}
+I implemented the slab test in \texttt{AABB::intersect}. It receives a ray and two output pointers. For each axis $a\in\{x,y,z\}$, with slab bounds $b_a^-,b_a^+$, I solve the ray equations at the two boundary planes:
+\begin{align}
+s_a^- &= (b_a^- - o_a)/d_a, &
+s_a^+ &= (b_a^+ - o_a)/d_a,\\
+t_a^{\mathrm{near}}&=\min(s_a^-,s_a^+), &
+t_a^{\mathrm{far}}&=\max(s_a^-,s_a^+).
+\end{align}
+Taking the minimum and maximum handles either sign of $d_a$. If $d_a=0$, I reject the ray when $o_a$ is outside the slab. A parallel ray inside the slab contributes the whole real line to the interval intersection.
+
+The ray is inside the box only when all three slab constraints hold. In the code, \texttt{tnear} is the maximum of the three near values and \texttt{tfar} is the minimum of the three far values. To decide whether the box overlaps the active ray segment, I then check
+\begin{equation}
+\underbrace{\max(t_{\mathrm{near}},t_{\min})}_{\texttt{tIn}}
+\ \leq\
+\underbrace{\min(t_{\mathrm{far}},t_{\max})}_{\texttt{tOut}} .
+\end{equation}
+A successful query writes the geometric \texttt{tnear} and \texttt{tfar} to \texttt{t\_in} and \texttt{t\_out}. For example, a geometric interval $[-1,3]$ overlaps a ray interval $[0,2]$ through $[0,2]$, and the output pointers still receive $-1$ and $3$.
+
+\subsection{Median-split CPU BVH}
+The recursive \texttt{BVHTree::build(depth, span\_left, span\_right)} returns an index in \texttt{internal\_nodes}. Each call owns a half-open range $[\ell,r)$ of objects. I combine their boxes by taking coordinatewise minima of their lower corners and maxima of their upper corners. An empty range yields the invalid index. For one object or when \texttt{depth} reaches the cutoff of 22, I make a leaf that records the range and its union box.
+
+For a larger range, I choose \texttt{dim} as the longest axis of the union box. For a primitive with bounds $\mathbf b^-,\mathbf b^+$, its comparison key is the \texttt{dim}-th component of $(\mathbf b^-+\mathbf b^+)/2$. I pass \texttt{nodes.begin()} offset by $\ell$, \texttt{split}, and $r$ to \texttt{std::nth\_element}, along with a comparator that captures \texttt{dim}. The split index is $\ell+\lfloor(r-\ell)/2\rfloor$. For example, $[2,6)$ splits at index 4, producing $[2,4)$ and $[4,6)$. The partition leaves both subranges available for subsequent splits.
+
+After the two recursive calls, I store their returned indices as the current node's children and return the current node's index. The supplied traversal tests each cached box before visiting its children. At a leaf, it invokes the object callback over the recorded range. The scene-level BVH groups scene primitives, and mesh-level traversal can reuse the same structure for triangles.
+
+\subsection{Sub-pixel sampling and the integrator}
+In the integrator's \texttt{render} method, I trace multiple sub-pixel rays using the supplied camera, sampler, and film. The loop over columns uses OpenMP. I give each column its own \texttt{Sampler}, seeded with its column index \texttt{dx}, and call \texttt{setPixelIndex2D} before sampling each pixel.
+
+For pixel $(x,y)$, \texttt{getPixelSample} returns
+\begin{equation}
+(x_s,y_s)=(x+\xi_1,y+\xi_2),\qquad \xi_1,\xi_2\in[0,1),
+\end{equation}
+using two uniform offsets.
+
+I use \texttt{generateDifferentialRay} at $(x_s,y_s)$. I evaluate \texttt{Li} for that ray and commit the RGB value to the film at the sample position. The supplied reconstruction filter associates weights with samples. For the samples that contribute to a pixel, the film resolves the color as
+\begin{equation}
+\widehat{\mathbf L}
+  =\frac{\sum_k w_k\mathbf L_k}{\sum_k w_k}.
+\end{equation}
+With equal weights and $N$ samples, this is $(1/N)\sum_k\mathbf L_k$. Edge pixels can see different surfaces at different sub-pixel positions, so averaging these rays smooths high-contrast edges.
+
+\paragraph{Following a camera ray.}
+At each hit, \texttt{Li} sets \texttt{interaction.wo} to $-\mathbf d$, the direction from the hit toward the previous ray origin. I branch on the material. At ideal refraction, I call the BSDF's \texttt{sample}, then replace the current ray with \texttt{spawnRay(interaction.wi)} and continue up to \texttt{max\_depth}. At the first diffuse hit I evaluate direct lighting with \texttt{directLighting}. A direct emitter hit returns its \texttt{Le}, and a miss returns the environment radiance when an environment is present. An unlit miss or an exhausted trace returns the initial zero color.
+
+\subsection{Ideal refraction and total internal reflection}
+I implemented the \texttt{sample} method of \texttt{PerfectRefraction}. Its interaction supplies the shading normal $\mathbf n$ and the outgoing direction $\mathbf w_o=-\mathbf d$. The traced ray arrives along $\mathbf d$. I compute $c=\mathbf n\cdot\mathbf w_o$ and use the configured \texttt{eta} value $\eta_0$ as follows:
+\begin{equation}
+(\mathbf n',\eta_c)=
+\begin{cases}
+(\mathbf n,\eta_0),&c>0,\\
+(-\mathbf n,1/\eta_0),&c\leq0.
+\end{cases}
+\end{equation}
+This puts $\mathbf n'$ on the side of the interface containing $\mathbf w_o$. The ratio passed to the supplied \texttt{Refract} helper multiplies the incident sine, following Snell's law with $\eta_c=n_{\mathrm{incident}}/n_{\mathrm{transmitted}}$ in that helper. The cases above show how my code maps the JSON value to the helper for the two signs of $c$.
+
+\paragraph{Recovering the direction from Snell's law.}
+Let $c_i=\mathbf n'\cdot\mathbf w_o$. The helper uses
+\begin{align}
+s_t^2 &= \eta_c^2 \max(0,1-c_i^2),\\
+c_t &= \sqrt{1-s_t^2}\quad\text{when }s_t^2<1,\\
+\mathbf w_t &=
+ -\eta_c\mathbf w_o+(\eta_c c_i-c_t)\mathbf n' .
+\end{align}
+The component tangent to the surface is scaled by $\eta_c$, and the normal component is $-c_t$ on the transmitted side. For example, $\eta_c=2$ and $c_i=0.8$ give $s_t^2=1.44$. In that case the helper returns \texttt{false}, so my code calls \texttt{Reflect} and obtains
+\begin{equation}
+\mathbf w_r=-\mathbf w_o+2(\mathbf w_o\cdot\mathbf n)\mathbf n.
+\end{equation}
+The chosen direction is written to \texttt{interaction.wi}, which the integrator uses for its next ray. The material returns unit RGB weight and writes a PDF of 1 if the caller supplies a PDF pointer. The integrator follows this single selected direction.
+
+\subsection{Diffuse direct lighting and multiple point lights}
+At a diffuse point $\mathbf x$, the supplied \texttt{IdealDiffusion} material evaluates the Lambertian BRDF. For admissible directions it returns $f_r=\boldsymbol\rho/\pi$, where $\boldsymbol\rho$ is the texture's RGB albedo. Write $[s]_+=\max(0,s)$ and let $\mathbf n_x$ be the geometric normal used for the receiving cosine. For point light $j$ at $\mathbf p_j$, I compute
+\begin{equation}
+r_j=\|\mathbf p_j-\mathbf x\|,\qquad
+\boldsymbol\omega_{i,j}=(\mathbf p_j-\mathbf x)/r_j .
+\end{equation}
+I build a shadow ray from $\mathbf x$ and set its maximum distance to $r_j$. When \texttt{scene->intersect} finds an obstruction on that segment, I skip the contribution. The shadow query receives a separate interaction so the original shading point can be reused for the other lights.
+
+\paragraph{The optional multiple-light extension.}
+I store the two independently configured point lights in a vector of \texttt{PointLightData}, with position and RGB strength per entry. Their values come from the \texttt{point\_light} and \texttt{point\_light2} position and flux properties. I evaluate each light's visibility $V_j$ independently and add
+\begin{equation}
+\mathbf L_{\mathrm{point}}=
+\sum_j V_j\, f_r\,
+\frac{\mathbf I_j [\mathbf n_x\cdot\boldsymbol\omega_{i,j}]_+}{r_j^2}.
+\end{equation}
+Here $\mathbf I_j$ is the RGB strength used directly by the code from the JSON field named \texttt{flux}. The clamped cosine accounts for the receiving orientation, and $1/r_j^2$ accounts for distance attenuation. Setting the second RGB vector to zero removes its contribution. In the Cornell-box experiment I place that light at $(-0.6,1.7,0.8)$, near the front, left wall, and ceiling.
+
+\subsection{Optional rectangular area light}
+The ceiling emitter is a mesh registered as an \texttt{AreaLight}. I extend \texttt{directLighting} to visit the scene's registered lights and select these mesh emitters. For each, the supplied \texttt{AreaLight::sample} returns a sampled interaction at $\mathbf y$ and fills \texttt{interaction.wi} with the direction $\boldsymbol\omega_i=(\mathbf y-\mathbf x)/r$, where $r=\|\mathbf y-\mathbf x\|$. Its light interaction stores $\mathbf w_o=-\boldsymbol\omega_i$, facing back toward the shading point. I use \texttt{spawnRayTo} to test the segment ending just before $\mathbf y$.
+
+\paragraph{Area PDF and the estimator.}
+The supplied mesh sampler selects triangle $j$ with probability $A_j/A$ and samples uniformly within that triangle. Its density on the emitter is therefore
+\begin{equation}
+p_A(\mathbf y)=\frac{A_j}{A}\frac{1}{A_j}=\frac{1}{A}.
+\end{equation}
+For example, a $0.5\times0.5$ rectangle has area $0.25$ and density 4 per unit area. The light-side projected area converts a surface patch $dA$ into a solid angle $d\omega=[\mathbf n_y\cdot(-\boldsymbol\omega_i)]_+dA/r^2$. Substituting that factor into the direct-light integral and dividing by the sampling density gives the contribution I accumulate:
+\begin{equation}
+\begin{aligned}
+c_x &= [\mathbf n_x\cdot\boldsymbol\omega_i]_+,\\
+c_y &= [\mathbf n_y\cdot(-\boldsymbol\omega_i)]_+,\\
+\widehat{\mathbf L}_{\mathrm{area}}
+ &=\frac{V\,\mathbf L_e(\mathbf y,-\boldsymbol\omega_i)\,f_r\,c_xc_y}
+         {r^2 p_A(\mathbf y)}.
+\end{aligned}
+\end{equation}
+Here $V$ is the visibility of the sampled segment. I take one point per emitter at each shading sample and reuse the framework's mesh sampling and one-sided \texttt{Le}. Near a shadow boundary, some samples see the lamp and others are blocked. Their average produces a penumbra. With fixed emitted radiance, enlarging the lamp also increases its total emitted power.
+
+\subsection{Optional environment lighting}
+I added an environment lookup on ray misses and a direct-light term at diffuse hits. The supplied \texttt{InfiniteAreaLight} converts the lookup direction into its local coordinates. It obtains polar angle $\theta$ and azimuth $\phi$, then reads the HDR texture at $(\phi/(2\pi),\theta/\pi)$. This is why changing the scene's environment transform rotates both the visible map and the incoming illumination.
+
+\paragraph{Uniform sampling over solid angle.}
+I added the sphere sampler \texttt{UniformSampleSphere} in \texttt{math\_utils.h}. The environment light calls this helper to obtain a direction. For \texttt{u.x} and \texttt{u.y} in $[0,1)$, the code uses
+\begin{align}
+z &= 2u_x-1, &
+\phi &= 2\pi u_y, &
+r_\perp &= \sqrt{1-z^2},\\
+\boldsymbol\omega_i &=
+(r_\perp\cos\phi,\ r_\perp\sin\phi,\ z).
+\end{align}
+Since $z=\cos\theta$, a unit sphere's solid-angle element is $d\omega=d\phi\,|dz|$. Uniform sampling over the rectangle $z\in[-1,1]$, $\phi\in[0,2\pi)$ thus gives
+\begin{equation}
+p_\omega(\boldsymbol\omega_i)=\frac{1}{2}\frac{1}{2\pi}
+=\frac{1}{4\pi}.
+\end{equation}
+The environment sample writes \texttt{interaction.wi}. I send a visibility ray in that direction with the framework's default long interval, then use its emitted radiance and PDF to add
+\begin{equation}
+\widehat{\mathbf L}_{\mathrm{env}}
+=\frac{V\,\mathbf L_{\mathrm{env}}(\boldsymbol\omega_i)\,
+       f_r[\mathbf n_x\cdot\boldsymbol\omega_i]_+}{p_\omega(\boldsymbol\omega_i)} .
+\end{equation}
+In the call to \texttt{Le}, the light's \texttt{wo} is $-\boldsymbol\omega_i$. The estimator uses uniform directions with one environment sample at each diffuse hit. Small, bright HDR regions can therefore produce high sample variance.
+
+\subsection{Optional CUDA BVH construction}
+I use the binary radix tree construction described by Karras~\cite{karras2012}. I added the CUDA source and a host interface that returns flat tree nodes and a sorted index array. The implementation has four stages.
+
+\paragraph{1. Input AABBs and Morton keys.}
+\texttt{makeGpuInput} writes the three lower and upper coordinates and the original object index for each primitive. \texttt{computeCentroidBounds} scans those bounds on the host to find the range of the box centers. For each axis $a$, let $c_a=(b_a^-+b_a^+)/2$ and let $c_a^-,c_a^+$ be the minimum and maximum center coordinates on that axis. On the GPU, \texttt{quantizeCoordinate} uses
+\begin{equation}
+\begin{aligned}
+s_a&=(c_a-c_a^-)/(c_a^+-c_a^-),\\
+q_a&=\min(1023,\lfloor1024s_a\rfloor).
+\end{aligned}
+\end{equation}
+A collapsed center range maps directly to 0. The upper endpoint maps to 1023. For $b_{a,i}$ the $i$-th bit of $q_a$, \texttt{morton3D} stores a 30-bit key in a 32-bit integer:
+\begin{equation}
+M=\sum_{i=0}^{9}\bigl(b_{x,i}\,2^{3i+2}
+                   +b_{y,i}\,2^{3i+1}
+                   +b_{z,i}\,2^{3i}\bigr).
+\end{equation}
+I use \texttt{thrust::stable\_sort\_by\_key} on the device to reorder the keys together with their original IDs. The primitive AABBs stay in input order and are accessed through those IDs.
+
+\paragraph{2. Prefixes and splits.}
+\texttt{commonPrefixLength} counts leading zeros in the XOR of two sorted keys. For equal keys, I extend the comparison to the positions $i$ and $j$ in the sorted array:
+\begin{equation}
+\delta(i,j)=
+\begin{cases}
+-1,&i\text{ or }j\text{ out of range},\\
+\mathrm{clz}_{32}(M_i\mathbin{\mathrm{xor}}M_j),&M_i\ne M_j,\\
+32+\mathrm{clz}_{32}(i\mathbin{\mathrm{xor}}j),&M_i=M_j.
+\end{cases}
+\end{equation}
+The second part of the prefix keeps primitives with equal Morton codes distinct.
+
+In \texttt{buildBvhTopology}, thread $i$ owns internal node $i$. It compares $\delta(i,i-1)$ and $\delta(i,i+1)$, chooses the side with the longer prefix and uses the other side's prefix as a threshold. Equal prefixes choose the positive direction. The code doubles the search distance until it brackets the range endpoint. A binary search locates the last position in that direction whose prefix with $i$ exceeds the threshold. This gives the inclusive range $[\texttt{first},\texttt{last}]$.
+
+A second search uses the range endpoints to set \texttt{target}. The \texttt{split} is the last index $k$ before \texttt{last} with $\delta(\texttt{first},k)>\texttt{target}$. The children cover $[\texttt{first},k]$ and $[k+1,\texttt{last}]$. For $N$ primitives, internal indices are $0$ through $N-2$ and the leaf for sorted position $j$ is at $N-1+j$. I use the leaf index for a one-primitive child and store parent pointers for both children.
+
+\paragraph{A four-object example.}
+With sorted keys $(5,12,43,43)$ and sorted original IDs $(1,3,0,2)$, the adjacent prefixes are 28, 26, and 63. The last value includes the tie-break using positions 2 and 3. At $i=0$, the left neighbor is out of range, so the root search goes right and finds \texttt{first} $=0$ and \texttt{last} $=3$. The endpoint prefix is 26. Position 1 still shares 28 leading bits with position 0, so \texttt{split} $=1$. The two internal children are 1 and 2. The leaf slots 3 through 6 refer to the original IDs $(1,3,0,2)$ in that order.
+
+\paragraph{3. Bottom-up bounding boxes.}
+\texttt{initializeBvhLeaves} writes the primitive boxes into their leaf slots. I then launch \texttt{reduceBvhBounds} with a thread per leaf. On reaching a parent, a thread increments its arrival counter with a device-scoped acquire/release atomic operation. The first arrival sees \texttt{old\_count} $=0$ and stops. The second sees \texttt{old\_count} $=1$, reads both child boxes, takes their coordinatewise minimum lower corner and maximum upper corner, and continues to the next parent. The acquire/release ordering makes the completed child bounds available across thread blocks. A tree with one primitive already has its leaf at index 0, so it needs no merge kernel.
+
+\paragraph{4. GPU-to-CPU integration.}
+\texttt{buildGpuBvh} hands the host code $2N-1$ nodes and $N$ sorted original indices. I check the CUDA operations and release the device buffers after copying the results. In \texttt{BVHTree::build}, I copy the GPU child indices and boxes into the corresponding CPU nodes and set the root to 0. For a leaf slot $i$, I look up the original object index at sorted position $i-(N-1)$ and give the leaf the half-open range $[\texttt{original},\texttt{original}+1)$ in \texttt{nodes}. The existing CPU traversal can then use the returned tree directly. With \texttt{USE\_CUDA\_BVH} disabled, or if the GPU build fails, the median-split CPU builder constructs the tree.
+
 \section{Results}
 
-\end{document}
+\subsection{Cornell box}
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.77\linewidth]{figures/cornell.png}
+  \caption{Cornell box with a refractive disk. $256\times256$ pixels, 32 samples per pixel.}
+  \label{fig:cornell}
+\end{figure}
+Figure~\ref{fig:cornell} shows the Cornell box with two point lights, the ceiling area emitter, and the refractive disk. The edges of the boxes behind the disk change direction at its silhouette.
+
+\subsection{Antialiasing and multiple point lights}
+
+\begin{figure*}[t]
+  \centering
+  \subfigure[One point light, 4 spp]{%
+    \includegraphics[width=0.29\textwidth]{figures/aa_4spp.png}}\hfill
+  \subfigure[One point light, 32 spp]{%
+    \includegraphics[width=0.29\textwidth]{figures/aa_32spp.png}}\hfill
+  \subfigure[Two point lights, 32 spp]{%
+    \includegraphics[width=0.29\textwidth]{figures/two_lights_32spp.png}}
+  \caption{Antialiasing and multiple point lights in the same Cornell box. Panels (a) and (b) change the sample count. Panels (b) and (c) change the second light's flux. All images use $256\times256$ pixels and identical display settings.}
+  \label{fig:point-light-comparisons}
+\end{figure*}
+The three panels in Figure~\ref{fig:point-light-comparisons} use the same camera and geometry with the ceiling emitter removed. With one point light, increasing the sample count from 4 to 32 smooths the edge on top of the tall box. This comparison uses the same light settings at both sample counts.
+
+At 32 spp, changing the second light's RGB flux from $(0,0,0)$ to $(7,12,5)$ illuminates the dark left face of the short box and changes the shadow pattern on the floor. The first light's position and flux are fixed. The single-light image at 32 spp serves as the baseline for both comparisons.
+
+\subsection{Rectangular emitter size}
+
+\begin{figure*}[t]
+  \centering
+  \subfigure[Side length 0.325]{\includegraphics[width=0.27\textwidth]{figures/area_small.png}}\hspace{0.06\textwidth}
+  \subfigure[Side length 0.900]{\includegraphics[width=0.27\textwidth]{figures/area_large.png}}
+  \caption{Area-light size comparison. Look at the shadow transition below and to the right of the tall box. Both renders use $256\times256$ pixels and 128 samples per pixel.}
+  \label{fig:area-size}
+\end{figure*}
+I fixed the Cornell-box geometry, camera, emitter center, orientation, and emitted radiance, then changed the emitter side length from 0.325 to 0.900 scene units. Both renders use only the area emitter and omit the refractive disk to make the shadow edges easier to see. The larger emitter produces a wider transition near the floor and right wall (Figure~\ref{fig:area-size}). A surface point near the boundary can see a fraction of the emitter over a wider region. Holding radiance fixed also makes the larger emitter brighter overall, so the size comparison focuses on the shadow edge. Both images use the same exposure and tone mapping.
+
+\subsection{Environment rotation}
+
+\begin{figure*}[t]
+  \centering
+  \subfigure[$-90^\circ$]{\includegraphics[width=0.27\textwidth]{figures/env_minus90.png}}\hspace{0.06\textwidth}
+  \subfigure[$+90^\circ$]{\includegraphics[width=0.27\textwidth]{figures/env_plus90.png}}
+  \caption{Environment-map rotation with the camera fixed. Compare the lighting on the two sides of the sphere. Both renders use $256\times256$ pixels and 256 samples per pixel.}
+  \label{fig:env-rotation}
+\end{figure*}
+The camera and the white diffuse sphere are fixed. Both renders use the Industrial Sunset (Pure Sky) HDR texture~\cite{industrialSunset}. I change only the environment map's \texttt{transform} field. Figure~\ref{fig:env-rotation} shows rotations of $-90^\circ$ and $+90^\circ$ around the world $y$-axis. The brighter region shifts from the right side of the sphere to the left side, along with the change in the background. Both images use the same exposure and tone mapping. Uniform sampling over the sphere leaves visible variance when the samples land on bright parts of the HDR texture.
+
+\subsection{GPU BVH validation}
+The CUDA-enabled build passed three tests in the \texttt{BVH} suite: \texttt{BasicConstruction}, \texttt{SingleObject}, and \texttt{EmptyTree}. The empty-tree case tests a query before a build. An additional four-object diagnostic recorded exactly four AABB queries during construction and both expected ray hits. This count matches the one-query-per-object GPU input pass. The CPU fallback would query the objects again during its median build. The checks measure the build path and traversal correctness for these cases.
+
+\begin{thebibliography}{2}
+\bibitem{karras2012}
+Tero Karras. 2012.
+\newblock Maximizing Parallelism in the Construction of BVHs, Octrees, and k-d Trees.
+\newblock In \emph{High Performance Graphics}. \href{https://research.nvidia.com/publication/2012-06_maximizing-parallelism-construction-bvhs-octrees-and-k-d-trees}{NVIDIA Research}.
+
+\bibitem{industrialSunset}
+Jarod Guest and Sergej Majboroda.
+\newblock Industrial Sunset (Pure Sky).
+\newblock \href{https://polyhaven.com/a/industrial_sunset_puresky}{Poly Haven}.
+\end{thebibliography}
+
+\end{document}

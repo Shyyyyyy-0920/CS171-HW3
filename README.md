@@ -1,7 +1,7 @@
 # CS171 Assignment 3: Basic Ray Tracing
 
-Name:  
-Student ID:  
+Name:  Shuhaoyu
+Student ID:  2024533012
 
 **Please write your Chinese name and your student ID in this README.**
 
@@ -32,4 +32,4 @@ Be prepared to demonstrate your code and results to TAs, including any optional 
 
 首先是从env换回box，是把setting.json里面的args参数从"data/env_test.json","-o","env_test.exr"换成"data/cbox_no_light_refract.json","-o","cbox_refraction.exr"
 
-其次，从CPU构建BVH，如过要重新构建，需要把`cmake.buildDirectory`  改为`${workspaceFolder}/build-cpu`, 需要把`cmake.configureSettings`里的`USE_CUDA_BVH`,改为`false`,需要把`clangd.arguments`里的编译数据库路径改为`--compile-commands-dir=${workspaceFolder}/build-cpu`,然后重新构建并启动renderer
+其次，从CPU构建BVH，如过要重新构建，需要把`settings.json`的`cmake.configureSettings`里把`"USE_CUDA_BVH": false`就行

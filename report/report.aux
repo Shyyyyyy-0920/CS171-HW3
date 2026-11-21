@@ -1,0 +1,65 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Implementation Details}{1}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Ray--triangle intersection}{1}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Solving for distance and barycentric coordinates.}{1}{section*.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Ray--AABB intersection}{1}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Median-split CPU BVH}{1}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Sub-pixel sampling and the integrator}{2}{subsection.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Following a camera ray.}{2}{section*.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Ideal refraction and total internal reflection}{2}{subsection.2.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Recovering the direction from Snell's law.}{2}{section*.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Diffuse direct lighting and multiple point lights}{2}{subsection.2.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{The optional multiple-light extension.}{2}{section*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.7}Optional rectangular area light}{2}{subsection.2.7}\protected@file@percent }
+\citation{karras2012}
+\@writefile{toc}{\contentsline {paragraph}{Area PDF and the estimator.}{3}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.8}Optional environment lighting}{3}{subsection.2.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Uniform sampling over solid angle.}{3}{section*.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.9}Optional CUDA BVH construction}{3}{subsection.2.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{1. Input AABBs and Morton keys.}{3}{section*.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{2. Prefixes and splits.}{3}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{A four-object example.}{3}{section*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{3. Bottom-up bounding boxes.}{3}{section*.10}\protected@file@percent }
+\citation{industrialSunset}
+\bibcite{karras2012}{{1}{}{{}}{{}}}
+\bibcite{industrialSunset}{{2}{}{{}}{{}}}
+\newlabel{tocindent-1}{0pt}
+\newlabel{tocindent0}{0pt}
+\newlabel{tocindent1}{4.185pt}
+\newlabel{tocindent2}{10.34999pt}
+\newlabel{tocindent3}{0pt}
+\providecommand\NAT@force@numbers{}\NAT@force@numbers
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Cornell box with a refractive disk. $256\times 256$ pixels, 32 samples per pixel.}}{4}{figure.caption.12}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:cornell}{{1}{4}{Cornell box with a refractive disk. $256\times 256$ pixels, 32 samples per pixel}{figure.caption.12}{}}
+\newlabel{fig:cornell@cref}{{[figure][1][]1}{[1][4][]4}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{4. GPU-to-CPU integration.}{4}{section*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Results}{4}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Cornell box}{4}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Antialiasing and multiple point lights}{4}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Rectangular emitter size}{4}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Environment rotation}{4}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}GPU BVH validation}{4}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{4}{section*.17}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Antialiasing and multiple point lights in the same Cornell box. Panels (a) and (b) change the sample count. Panels (b) and (c) change the second light's flux. All images use $256\times 256$ pixels and identical display settings.}}{5}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:point-light-comparisons}{{2}{5}{Antialiasing and multiple point lights in the same Cornell box. Panels (a) and (b) change the sample count. Panels (b) and (c) change the second light's flux. All images use $256\times 256$ pixels and identical display settings}{figure.caption.13}{}}
+\newlabel{fig:point-light-comparisons@cref}{{[figure][2][]2}{[1][4][]5}{}{}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {One point light, 4 spp}}}{5}{figure.caption.13}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {One point light, 32 spp}}}{5}{figure.caption.13}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Two point lights, 32 spp}}}{5}{figure.caption.13}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Area-light size comparison. Look at the shadow transition below and to the right of the tall box. Both renders use $256\times 256$ pixels and 128 samples per pixel.}}{5}{figure.caption.14}\protected@file@percent }
+\newlabel{fig:area-size}{{3}{5}{Area-light size comparison. Look at the shadow transition below and to the right of the tall box. Both renders use $256\times 256$ pixels and 128 samples per pixel}{figure.caption.14}{}}
+\newlabel{fig:area-size@cref}{{[figure][3][]3}{[1][4][]5}{}{}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Side length 0.325}}}{5}{figure.caption.14}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Side length 0.900}}}{5}{figure.caption.14}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Environment-map rotation with the camera fixed. Compare the lighting on the two sides of the sphere. Both renders use $256\times 256$ pixels and 256 samples per pixel.}}{5}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:env-rotation}{{4}{5}{Environment-map rotation with the camera fixed. Compare the lighting on the two sides of the sphere. Both renders use $256\times 256$ pixels and 256 samples per pixel}{figure.caption.15}{}}
+\newlabel{fig:env-rotation@cref}{{[figure][4][]4}{[1][4][]5}{}{}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {$-90^\circ $}}}{5}{figure.caption.15}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {$+90^\circ $}}}{5}{figure.caption.15}\protected@file@percent }
+\newlabel{TotPages}{{5}{5}{}{page.5}{}}
+\gdef \@abspage@last{5}
